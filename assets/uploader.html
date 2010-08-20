@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title>uploader</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style type="text/css" media="screen">
+		body{
+			background-color:white;
+		}
+		.uploadLink{
+			position:relative;
+			display:inline-block;
+			-moz-border-radius:1em 1em 1em 1em;
+			border-radius:1em;
+			background-color:#81B934;
+			color:#FFFFFF;
+			font-size:0.7em;
+			height:2em;
+			line-height:2em;
+			margin:0;
+			padding:0 1em 0.1em;
+			text-decoration:none;
+			text-shadow:none;
+		}
+		.uploadLink object, .uploadLink embed{
+			display:block;
+			position:absolute;
+			left:0;
+			top:0;
+			z-index:5;
+		}
+		span.uploadLink:hover{
+			background-color:blue;
+		}
+		#list span{
+			display:block;
+		}
+		</style>
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/swfobject.js"></script>
+		<script type="text/javascript" src="js/jquery.upload.js"></script>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			var dwidth = $('.uploadLink').outerWidth();
+			var dheight = $('.uploadLink').outerHeight();
+		
+			var flashvars = {
+				filterDesc: "Allowed Files",
+				filterFiles:'*.jpg;*.png;*.gif',
+			};
+			var params = {
+				wmode:'transparent',
+			};
+			var attributes = {
+				wmode:'transparent',
+			};
+
+			swfobject.embedSWF("flash/uploader.swf", "link", dwidth, dheight, "9.0.0","flash/expressInstall.swf", flashvars, params, attributes);
+		});
+		</script>
+	</head>
+	<body>
+		<span class="uploadLink">Select files<span id="link">&nbsp;</span></span>
+		<span id="list"></span>
+	</body>
+</html>
