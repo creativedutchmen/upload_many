@@ -28,7 +28,6 @@ var upload_many;
 			wrapper.find('input[type=file]').remove();			
 			
 			$('<a class="button"><b>Select File</b></a>').appendTo(wrapper.find('span').not(':has(input[type="hidden"])')).append('<span id="flash_holder">&nbsp;</span>');
-			
 			var dwidth = wrapper.find('a.button').outerWidth();
 			var dheight = wrapper.find('a.button').outerHeight();
 		
@@ -44,6 +43,10 @@ var upload_many;
 			};
 
 			swfobject.embedSWF(Symphony.WEBSITE + "/extensions/upload_many/assets/flash/uploader.swf", "flash_holder", dwidth, dheight, "9.0.0",Symphony.WEBSITE + "/extensions/upload_many/assets/flash/expressInstall.swf", flashvars, params, attributes);
+			
+			wrapper.find('label.field-upload_many:has(a.button) em').remove();
+			
+			$('<span id="list"><i>No file selected</i></span>').appendTo(wrapper.find('label.file > span'));
 			
 		});
 		
