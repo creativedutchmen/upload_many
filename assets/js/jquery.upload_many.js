@@ -9,7 +9,7 @@ var upload_many;
 		return $(this).each(function(){
 			
 			var wrapper = $(this);
-			
+						
 			//single or multi?
 			var location = window.location + "";
 			var many = location.substring(location.length-5);
@@ -25,7 +25,9 @@ var upload_many;
 			
 			//insert the upload_many upload field
 			//TODO: languages
-			wrapper.find('input[type=file]').remove();			
+			wrapper.find('input[type=file]').each(function(){
+				upload_many.fieldName = $(this).attr("name");
+			}).remove();			
 			
 			$('<a class="button"><b>Select File</b></a>').appendTo(wrapper.find('span').not(':has(input[type="hidden"])')).append('<span id="flash_holder">&nbsp;</span>');
 			var dwidth = wrapper.find('a.button').outerWidth();
@@ -34,6 +36,7 @@ var upload_many;
 			var flashvars = {
 				filterDesc: "Allowed Files",
 				filterFiles:'*.jpg;*.png;*.gif',
+				url: $('form').attr('action'),
 			};
 			var params = {
 				wmode:'transparent',
@@ -42,7 +45,7 @@ var upload_many;
 				wmode:'transparent',
 			};
 
-			swfobject.embedSWF(Symphony.WEBSITE + "/extensions/upload_many/assets/flash/uploader.swf", "flash_holder", dwidth, dheight, "9.0.0",Symphony.WEBSITE + "/extensions/upload_many/assets/flash/expressInstall.swf", flashvars, params, attributes);
+			swfobject.embedSWF(Symphony.WEBSITE + "/extensions/upload_many/assets/flash/uploader.swf?"+document.cookie, "flash_holder", dwidth, dheight, "9.0.0",Symphony.WEBSITE + "/extensions/upload_many/assets/flash/expressInstall.swf", flashvars, params, attributes);
 			
 			wrapper.find('label.field-upload_many:has(a.button) em').remove();
 			
@@ -55,6 +58,8 @@ var upload_many;
 	
 	upload_many = {
 		
+		fieldName: null,
+		
 		oldFile: null,
 		
 		fileList: [],
@@ -66,6 +71,7 @@ var upload_many;
 			this.fileList.push(filename);
 			$('#list').append('<span id="file-'+filename+'">'+filename+'<em>Remove file</em></span>');
 			$('#list i').remove();
+			$("#flash_holder").get(0).upload();
 		},
 		
 		resetList: function(e){
@@ -76,6 +82,14 @@ var upload_many;
 		
 		uploadError: function(filename, error){
 			$("#list span").addClass('invalid');
+		},
+		
+		getFields: function(){
+			var returns = [];
+			$("form input, form textarea").each(function(){
+				returns.push($(this).attr("name")+'='+$(this).val());
+			});
+			return returns.join('&');
 		},
 	}
 	

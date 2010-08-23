@@ -1,6 +1,9 @@
 <?php
 
+file_put_contents('log.txt',print_r(session_id(), true));
+
 require_once(TOOLKIT . '/class.administrationpage.php');
+require_once('/./../fields/field.upload_many.php');
 
 class contentExtensionUpload_Manyindex extends AdministrationPage {
 	
@@ -10,8 +13,6 @@ class contentExtensionUpload_Manyindex extends AdministrationPage {
 	}
 	
 	public function __viewIndex() {
-		header('content-type: text/plain');
-		print_r($_FILES);
-		exit;
+		file_put_contents('log.txt',"login success!");		
 	}
 }

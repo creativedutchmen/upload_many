@@ -32,4 +32,9 @@ Class fieldUpload_Many extends fieldUpload{
 		return false;
 	}
 	
+	function processRawFieldData($data, &$message, $entry_id=NULL){
+		print_r($data);
+		return parent::processRawFieldData($data, $message, $entry_id);
+	}
+	
 }
