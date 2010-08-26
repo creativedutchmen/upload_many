@@ -10,6 +10,7 @@ Class fieldUpload_Many extends fieldUpload{
 		$this->_required = false;
 		
 		$this->set('hide', 'no');
+		$this->set('required','yes');
 	}
 	
 	function isSortable(){
@@ -33,7 +34,6 @@ Class fieldUpload_Many extends fieldUpload{
 	}
 	
 	function processRawFieldData($data, &$message, $entry_id=NULL){
-		print_r($data);
 		return parent::processRawFieldData($data, $message, $entry_id);
 	}
 	

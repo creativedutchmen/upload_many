@@ -9,10 +9,11 @@ a.upload-many.button{
 	padding-right:12px;
 }
 
-.field-upload_many .button{
+.field-upload_many span a.button{
 	font-size:1em;
 	background-color:#81B934;
 	position:relative;
+	color:white;
 }
 .field-upload_many .button span{
 	visibility:hidden;
@@ -43,7 +44,24 @@ a.upload-many.button{
 	padding-right:1em;
 	margin-top:6px;
 	margin-bottom:0px;
+	position:relative;
+	z-index:1;
 }
 .field-upload_many .file em{
 	margin-right:0;
+}
+.field-upload_many span#list span.upload-progress{
+	padding:0;
+	margin:0;
+	position:absolute;
+	left:0;
+	top:0;
+	height:100%;
+	width:0%;
+	background-color:#81B934;
+	z-index:-1;
+}
+.field-upload_many span#list b{
+	font-weight:normal;
+	color:black;
 }

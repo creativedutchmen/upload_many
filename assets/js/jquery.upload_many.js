@@ -27,6 +27,7 @@ var upload_many;
 			//TODO: languages
 			wrapper.find('input[type=file]').each(function(){
 				upload_many.fieldName = $(this).attr("name");
+				//wrapper.find("label").attr("name",upload_many.fieldName);
 			}).remove();			
 			
 			$('<a class="button"><b>Select File</b></a>').appendTo(wrapper.find('span').not(':has(input[type="hidden"])')).append('<span id="flash_holder">&nbsp;</span>');
@@ -55,6 +56,9 @@ var upload_many;
 			
 			$('input[type=submit]').click(function(){
 				$("#flash_holder").get(0).upload();
+				wrapper.find("span span#list em").remove();
+				$("div.invalid").removeClass("invalid").find("p.errorText").remove();
+				$(".upload-progress").css("background-color","#81B934");
 				return false;
 			});
 			
@@ -76,7 +80,7 @@ var upload_many;
 		
 		addFile: function(id,filename){
 			this.fileList.push(filename);
-			$('#list').append('<span id="file-'+id+'" name="'+filename+'">'+filename+'<em>Remove file</em></span>');
+			$('#list').append('<span id="file-'+id+'" name="'+filename+'"><b>'+filename+'</b><em>Remove file</em><span class="upload-progress"></span></span>');
 			$('#list i').remove();
 			$('#list em').click(function(){
 				var size = $(this).parent().attr('id').substr(5);
@@ -102,6 +106,26 @@ var upload_many;
 			});
 			return returns.join('&');
 		},
+		
+		setStatus: function(filename, totalSize, completeSize){
+			var id = 'file-'+totalSize;
+			$('#list #'+id).each(function(){
+				$(this).find(".upload-progress").width((100*(completeSize/totalSize))+"%");
+			});
+		},
+		
+		setErrorField: function(fieldName, errorText){
+			$('*[name=fields['+fieldName+']]').parents('div.field:not(.invalid)').append('<p class="errorText">'+errorText+'</p>').addClass("invalid");
+		},
+		
+		processErrorFields: function(jsonObject, fileName, fileSize){
+			if(jsonObject.error != ""){
+				$('#file-'+fileSize+"[name="+fileName+"]").find(".upload-progress").css("background-color","#DD4422");
+			}
+			for(var i in jsonObject.error){
+				this.setErrorField(jsonObject.error[i].fieldName, jsonObject.error[i].error);
+			}
+		}
 	}
 	
 	$(document).ready(function() {
