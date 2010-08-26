@@ -34,7 +34,6 @@ a.upload-many.button{
 	margin:0;
 	clear:both;
 	position:relative;
-	padding-top:1em;
 }
 
 .field-upload_many span#list i{
@@ -42,7 +41,8 @@ a.upload-many.button{
 }
 .field-upload_many span#list span{
 	padding-right:1em;
-	margin-bottom:6px;
+	margin-top:6px;
+	margin-bottom:0px;
 }
 .field-upload_many .file em{
 	margin-right:0;

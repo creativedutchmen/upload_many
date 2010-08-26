@@ -32,11 +32,13 @@ var upload_many;
 			$('<a class="button"><b>Select File</b></a>').appendTo(wrapper.find('span').not(':has(input[type="hidden"])')).append('<span id="flash_holder">&nbsp;</span>');
 			var dwidth = wrapper.find('a.button').outerWidth();
 			var dheight = wrapper.find('a.button').outerHeight();
+			
+			var section_handle = location.substring(Symphony.WEBSITE.length).split("/")[3];
 		
 			var flashvars = {
 				filterDesc: "Allowed Files",
 				filterFiles:'*.jpg;*.png;*.gif',
-				url: $('form').attr('action'),
+				url: Symphony.WEBSITE + '/symphony/extension/upload_many/create/new/'+section_handle+"/?action",
 			};
 			var params = {
 				wmode:'transparent',
@@ -49,7 +51,12 @@ var upload_many;
 			
 			wrapper.find('label.field-upload_many:has(a.button) em').remove();
 			
-			$('<span id="list"><i>No file selected</i></span>').appendTo(wrapper.find('label.file > span'));
+			$('<span id="list"></span>').appendTo(wrapper.find('label.file > span'));
+			
+			$('input[type=submit]').click(function(){
+				$("#flash_holder").get(0).upload();
+				return false;
+			});
 			
 		});
 		
@@ -67,17 +74,21 @@ var upload_many;
 		renderList: function(){
 		},
 		
-		addFile: function(filename){
+		addFile: function(id,filename){
 			this.fileList.push(filename);
-			$('#list').append('<span id="file-'+filename+'">'+filename+'<em>Remove file</em></span>');
+			$('#list').append('<span id="file-'+id+'" name="'+filename+'">'+filename+'<em>Remove file</em></span>');
 			$('#list i').remove();
-			$("#flash_holder").get(0).upload();
+			$('#list em').click(function(){
+				var size = $(this).parent().attr('id').substr(5);
+				var filename = $(this).parent().attr('name');
+				$("#flash_holder").get(0).remove(size,filename);
+				$(this).parent().remove();
+			});
 		},
 		
 		resetList: function(e){
 			this.fileList.length = 0;
 			$("#list").empty();
-			$("#list").append('<i>No file selected</i>');
 		},
 		
 		uploadError: function(filename, error){
