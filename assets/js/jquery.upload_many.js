@@ -9,6 +9,7 @@ var upload_many;
 		return $(this).each(function(){
 			
 			var wrapper = $(this);
+			upload_many.wrapper = wrapper;
 						
 			//single or multi?
 			var location = window.location + "";
@@ -55,10 +56,7 @@ var upload_many;
 			$('<span id="list"></span>').appendTo(wrapper.find('label.file > span'));
 			
 			$('input[type=submit]').click(function(){
-				$("#flash_holder").get(0).upload();
-				wrapper.find("span span#list em").remove();
-				$("div.invalid").removeClass("invalid").find("p.errorText").remove();
-				$(".upload-progress").css("background-color","#81B934");
+				upload_many.startUpload();
 				return false;
 			});
 			
@@ -75,12 +73,18 @@ var upload_many;
 		
 		fileList: [],
 		
+		wrapper: null,
+		
+		uploadTotal:0,
+		uploadSuccess:0,
+		uploadFailed:0,
+		
 		renderList: function(){
 		},
 		
 		addFile: function(id,filename){
 			this.fileList.push(filename);
-			$('#list').append('<span id="file-'+id+'" name="'+filename+'"><b>'+filename+'</b><em>Remove file</em><span class="upload-progress"></span></span>');
+			$('#list').append('<span id="file-'+id+'" name="'+filename+'"><b>'+filename+'</b><em class="button">Remove file</em><span class="upload-progress"></span></span>');
 			$('#list i').remove();
 			$('#list em').click(function(){
 				var size = $(this).parent().attr('id').substr(5);
@@ -88,11 +92,15 @@ var upload_many;
 				$("#flash_holder").get(0).remove(size,filename);
 				$(this).parent().remove();
 			});
+			this.uploadTotal++;
 		},
 		
 		resetList: function(e){
 			this.fileList.length = 0;
 			$("#list").empty();
+			this.uploadSuccess = 0;
+			this.uploadFailed = 0;
+			this.uploadTotal = 0;
 		},
 		
 		uploadError: function(filename, error){
@@ -120,11 +128,30 @@ var upload_many;
 		
 		processErrorFields: function(jsonObject, fileName, fileSize){
 			if(jsonObject.error != ""){
-				$('#file-'+fileSize+"[name="+fileName+"]").find(".upload-progress").css("background-color","#DD4422");
+				$('#file-'+fileSize+"[name="+fileName+"]").addClass("error").find(".upload-progress").css("background-color","#DD4422");
+				this.uploadFailed++;
+				//$('#file-'+fileSize+"[name="+fileName+"]").find("em").show();
+			}
+			else{
+				this.uploadSuccess++;
 			}
 			for(var i in jsonObject.error){
 				this.setErrorField(jsonObject.error[i].fieldName, jsonObject.error[i].error);
 			}
+			if(this.uploadSuccess+this.uploadFailed == this.uploadTotal){
+				$('form').prepend("<p id='notice' class='"+((this.uploadFailed == 0)?"success":"error")+"'>From a total of "+this.uploadTotal+" entries, "+this.uploadSuccess+" succeeded, and "+this.uploadFailed+" failed.");
+			}
+		},
+		
+		startUpload: function(){
+			this.uploadFailed = 0;
+			this.uploadSuccess = 0;
+			$("#flash_holder").get(0).upload();
+			//files can not be deleted in the middle of the uploading process
+			this.wrapper.find("span span#list em").hide();
+			$("div.invalid").removeClass("invalid").find("p.errorText").remove();
+			$(".upload-progress").css("background-color","#81B934");
+			$('form').find("p#notice").remove();
 		}
 	}
 	

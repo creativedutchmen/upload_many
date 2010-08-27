@@ -46,6 +46,7 @@ a.upload-many.button{
 	margin-bottom:0px;
 	position:relative;
 	z-index:1;
+	background-color:#666;
 }
 .field-upload_many .file em{
 	margin-right:0;
@@ -60,8 +61,28 @@ a.upload-many.button{
 	width:0%;
 	background-color:#81B934;
 	z-index:-1;
+	border:0;
 }
 .field-upload_many span#list b{
 	font-weight:normal;
-	color:black;
+	line-height:2em;
+	color:white;
+}
+.field-upload_many span#list .error b{
+	color:white;
+}
+.field-upload_many .file em{
+	height:2em;
+	line-height:2em;
+	margin:0;
+	padding:0 1em 0.1em;
+	text-decoration:none;
+	text-shadow:none;
+	background-color:#ef6a4a;
+	width:auto;
+	-moz-border-radius:1em;
+	color:white;
+}
+.field-upload_many .file em:hover{
+	background-color:black;
 }
