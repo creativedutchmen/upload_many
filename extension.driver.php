@@ -54,7 +54,7 @@
 						`field_id` INT UNSIGNED NOT NULL ,
 						`destination` VARCHAR( 255 ) NOT NULL ,
 						`validator` VARCHAR( 50 ) NULL DEFAULT NULL
-					");
+					)");
 			}
 			catch (Exception $e){
 				return false;

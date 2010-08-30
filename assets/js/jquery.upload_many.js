@@ -31,7 +31,7 @@ var upload_many;
 				//wrapper.find("label").attr("name",upload_many.fieldName);
 			}).remove();			
 			
-			$('<a class="button"><b>Select File</b></a>').appendTo(wrapper.find('span').not(':has(input[type="hidden"])')).append('<span id="flash_holder">&nbsp;</span>');
+			$('<a class="button"><b>Select Files</b></a>').appendTo(wrapper.find('span').not(':has(input[type="hidden"])')).append('<span id="flash_holder">&nbsp;</span>');
 			var dwidth = wrapper.find('a.button').outerWidth();
 			var dheight = wrapper.find('a.button').outerHeight();
 			
@@ -40,7 +40,7 @@ var upload_many;
 			var flashvars = {
 				filterDesc: "Allowed Files",
 				filterFiles:'*.jpg;*.png;*.gif',
-				url: Symphony.WEBSITE + '/symphony/extension/upload_many/create/new/'+section_handle+"/?action",
+				url: Symphony.WEBSITE + '/symphony/extension/upload_many/create/new/'+section_handle+"/?action=true&"+document.cookie,
 			};
 			var params = {
 				wmode:'transparent',
