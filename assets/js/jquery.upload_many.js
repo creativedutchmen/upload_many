@@ -1,162 +1,80 @@
-var upload_many;
-
 (function($) {
-	$.fn.upload_many = function(options, callback) {	
-			
-		options = $.extend({
-		}, options);
-				
-		return $(this).each(function(){
-			
-			var wrapper = $(this);
-			upload_many.wrapper = wrapper;
-						
-			//single or multi?
-			var location = window.location + "";
-			var many = location.substring(location.length-5);
-			
-			if(many == 'many/'){
-				options.multiple = true;
-			}
-			
-			//replace standard remove file action with my own
-			wrapper.find('span em').unbind('click').click(function(){
-				//place new remove file handler here
-			});
-			
-			//insert the upload_many upload field
-			//TODO: languages
-			wrapper.find('input[type=file]').each(function(){
-				upload_many.fieldName = $(this).attr("name");
-				//wrapper.find("label").attr("name",upload_many.fieldName);
-			}).remove();			
-			
-			$('<a class="button"><b>Select Files</b></a>').appendTo(wrapper.find('span').not(':has(input[type="hidden"])')).append('<span id="flash_holder">&nbsp;</span>');
-			var dwidth = wrapper.find('a.button').outerWidth();
-			var dheight = wrapper.find('a.button').outerHeight();
-			
-			var section_handle = location.substring(Symphony.WEBSITE.length).split("/")[3];
-		
-			var flashvars = {
-				filterDesc: "Allowed Files",
-				filterFiles:'*.jpg;*.png;*.gif',
-				url: Symphony.WEBSITE + '/symphony/extension/upload_many/create/new/'+section_handle+"/?action=true&"+document.cookie,
-			};
-			var params = {
-				wmode:'transparent',
-			};
-			var attributes = {
-				wmode:'transparent',
-			};
 
-			swfobject.embedSWF(Symphony.WEBSITE + "/extensions/upload_many/assets/flash/uploader.swf?"+document.cookie, "flash_holder", dwidth, dheight, "9.0.0",Symphony.WEBSITE + "/extensions/upload_many/assets/flash/expressInstall.swf", flashvars, params, attributes);
-			
-			wrapper.find('label.field-upload_many:has(a.button) em').remove();
-			
-			$('<span id="list"></span>').appendTo(wrapper.find('label.file > span'));
-			
-			$('input[type=submit]').click(function(){
-				upload_many.startUpload();
-				return false;
-			});
-			
-		});
-		
-		
-	}
+	var location = window.location + "";
+	var section_handle = location.substring(Symphony.WEBSITE.length).split("/")[3];
+	var uploadUrl = Symphony.WEBSITE + '/symphony/extension/upload_many/create/new/'+section_handle+"/?action=true";
 	
-	upload_many = {
-		
+
+	var upload_many = {
+	
 		fieldName: null,
 		
-		oldFile: null,
-		
-		fileList: [],
-		
-		wrapper: null,
-		
-		uploadTotal:0,
-		uploadSuccess:0,
-		uploadFailed:0,
-		
-		renderList: function(){
-		},
-		
-		addFile: function(id,filename){
-			this.fileList.push(filename);
-			$('#list').append('<span id="file-'+id+'" name="'+filename+'"><b>'+filename+'</b><em class="button">Remove file</em><span class="upload-progress"></span></span>');
-			$('#list i').remove();
-			$('#list em').click(function(){
-				var size = $(this).parent().attr('id').substr(5);
-				var filename = $(this).parent().attr('name');
-				$("#flash_holder").get(0).remove(size,filename);
-				$(this).parent().remove();
+		setUp: function(){
+			//javascript is available, and because the html4 fallback is used, it should always be right.
+			
+			upload_many.fieldName = $(".field-upload_many input[type=file]").attr("name");
+			
+			
+			$(".field-upload_many input").remove();
+			$(".field-upload_many label>span").append("<a href='#' class='button' id='browse'>Upload Files</a>");
+			
+			uploader.init();
+			
+			
+			
+			$("input[type=submit]").click(function(e){
+				uploader.start();
+				e.preventDefault();
+				//create all entries
+				uploader.settings.multipart_params = upload_many.processFields();
+				uploader.settings.multipart_params['fieldName'] = upload_many.fieldName;
+				
 			});
-			this.uploadTotal++;
+			
+			uploader.bind('FilesAdded', function(up, files) {
+				$.each(files, function(i, file) {
+					$('#filelist').append(
+						'<div id="' + file.id + '">' +
+						file.name + ' (' + plupload.formatSize(file.size) + ') <b></b>' +
+					'</div>');
+				});
+				up.refresh(); // Reposition Flash/Silverlight
+			});
 		},
 		
-		resetList: function(e){
-			this.fileList.length = 0;
-			$("#list").empty();
-			this.uploadSuccess = 0;
-			this.uploadFailed = 0;
-			this.uploadTotal = 0;
-		},
-		
-		uploadError: function(filename, error){
-			$("#list span").addClass('invalid');
-		},
-		
-		getFields: function(){
-			var returns = [];
+		processFields: function(){
+			var returns = {};
+			var i = 0;
 			$("form input, form textarea").each(function(){
-				returns.push($(this).attr("name")+'='+$(this).val());
+				returns[$(this).attr("name")] = $(this).val();
 			});
-			return returns.join('&');
-		},
-		
-		setStatus: function(filename, totalSize, completeSize){
-			var id = 'file-'+totalSize;
-			$('#list #'+id).each(function(){
-				$(this).find(".upload-progress").width((100*(completeSize/totalSize))+"%");
-			});
-		},
-		
-		setErrorField: function(fieldName, errorText){
-			$('*[name=fields['+fieldName+']]').parents('div.field:not(.invalid)').append('<p class="errorText">'+errorText+'</p>').addClass("invalid");
-		},
-		
-		processErrorFields: function(jsonObject, fileName, fileSize){
-			if(jsonObject.error != ""){
-				$('#file-'+fileSize+"[name="+fileName+"]").addClass("error").find(".upload-progress").css("background-color","#DD4422");
-				this.uploadFailed++;
-				//$('#file-'+fileSize+"[name="+fileName+"]").find("em").show();
-			}
-			else{
-				this.uploadSuccess++;
-			}
-			for(var i in jsonObject.error){
-				this.setErrorField(jsonObject.error[i].fieldName, jsonObject.error[i].error);
-			}
-			if(this.uploadSuccess+this.uploadFailed == this.uploadTotal){
-				$('form').prepend("<p id='notice' class='"+((this.uploadFailed == 0)?"success":"error")+"'>From a total of "+this.uploadTotal+" entries, "+this.uploadSuccess+" succeeded, and "+this.uploadFailed+" failed.");
-			}
-		},
-		
-		startUpload: function(){
-			this.uploadFailed = 0;
-			this.uploadSuccess = 0;
-			$("#flash_holder").get(0).upload();
-			//files can not be deleted in the middle of the uploading process
-			this.wrapper.find("span span#list em").hide();
-			$("div.invalid").removeClass("invalid").find("p.errorText").remove();
-			$(".upload-progress").css("background-color","#81B934");
-			$('form').find("p#notice").remove();
+			return returns;
 		}
-	}
+	
+	};
+
+	var uploader = new plupload.Uploader({
+		runtimes : 'html5,flash,gears,html4',
+		browse_button : 'browse',
+		max_file_size : '10mb',
+		url:uploadUrl,
+		multipart:true,
+		
+		//TODO: make settting.
+		resize : {width : 320, height : 240, quality : 90},
+		
+		flash_swf_url : Symphony.WEBSITE+'/extensions/upload_many/assets/plupload/plupload.flash.swf',
+		
+		//TODO: make setting.
+		filters : [
+			{title : "Image files", extensions : "jpg,gif,png"},
+		]
+		
+	});
 	
 	$(document).ready(function() {
-		$('div.field-upload_many').upload_many();
+		upload_many.setUp();
 	});
+	
 })(jQuery);
 

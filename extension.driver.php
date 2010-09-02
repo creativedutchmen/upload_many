@@ -40,7 +40,7 @@
 				}
 				elseif($page instanceof ContentPublish and ($page->_context['page'] == 'new' || $page->_context['page'] == 'edit')) {
 					$page->addStylesheetToHead(URL . '/extensions/upload_many/assets/uploader.css', 'screen', 991);
-					$page->addScriptToHead(URL . '/extensions/upload_many/assets/js/swfobject.js', 992);
+					$page->addScriptToHead(URL . '/extensions/upload_many/assets/plupload/plupload.full.min.js', 992);
 					$page->addScriptToHead(URL . '/extensions/upload_many/assets/js/jquery.upload_many.js', 992);
 				}
 			}

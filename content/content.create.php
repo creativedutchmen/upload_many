@@ -1,5 +1,4 @@
 <?php
-
 require_once(TOOLKIT . '/class.administrationpage.php');
 require_once('/./../fields/field.upload_many.php');
 
@@ -12,7 +11,7 @@ class contentExtensionUpload_Manycreate extends AdministrationPage {
 	
 	//taken from content.publish.php (modified to return a json string instead of a html page).
 	function __actionNew(){
-
+		
 		if(@array_key_exists('save', $_POST['action']) || @array_key_exists("done", $_POST['action'])) {
 
 			$sectionManager = new SectionManager($this->_Parent);
@@ -35,6 +34,12 @@ class contentExtensionUpload_Manycreate extends AdministrationPage {
 				$entry->set('creation_date_gmt', DateTimeObj::getGMT('Y-m-d H:i:s'));
 
 				$fields = $_POST['fields'];
+				
+				$upload_many_field_name = substr($_POST['fieldName'],7,-1);
+				
+				//$_FILES['fields'][$upload_many_field_name] = $_FILES['file'];
+				
+				print_r($_FILES);
 
 				## Combine FILES and POST arrays, indexed by their custom field handles
 				if(isset($_FILES['fields'])){
@@ -56,6 +61,8 @@ class contentExtensionUpload_Manycreate extends AdministrationPage {
 						}
 					}
 				}
+				
+				$fields[$upload_many_field_name] = $_FILES['file'];
 				
 				if(__ENTRY_FIELD_ERROR__ == $entry->checkPostData($fields, $this->_errors)){
 					
