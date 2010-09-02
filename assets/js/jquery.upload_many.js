@@ -15,31 +15,35 @@
 			upload_many.fieldName = $(".field-upload_many input[type=file]").attr("name");
 			
 			
-			$(".field-upload_many input").remove();
+			$(".field-upload_many input").hide();
 			$(".field-upload_many label>span").append("<a href='#' class='button' id='browse'>Upload Files</a>");
 			
 			uploader.init();
 			
-			
+			$('<span id="list"></span>').appendTo($('.field-upload_many label.file > span'));			
 			
 			$("input[type=submit]").click(function(e){
-				uploader.start();
-				e.preventDefault();
-				//create all entries
+			
 				uploader.settings.multipart_params = upload_many.processFields();
 				uploader.settings.multipart_params['fieldName'] = upload_many.fieldName;
 				
+				uploader.start();
+				e.preventDefault();
+				//create all entries
 			});
 			
 			uploader.bind('FilesAdded', function(up, files) {
 				$.each(files, function(i, file) {
-					$('#filelist').append(
-						'<div id="' + file.id + '">' +
-						file.name + ' (' + plupload.formatSize(file.size) + ') <b></b>' +
-					'</div>');
+					$('<span id="' + file.id + '"><b>'+file.name+'</b><em class="button">Remove file</em><span class="upload-progress"></span></span>').appendTo("#list").find("em").each(function(){
+						$(this).click(function(){
+							upload_many.removeFile($(this).parent().attr("id"));
+						});
+					});
 				});
 				up.refresh(); // Reposition Flash/Silverlight
 			});
+			
+			
 		},
 		
 		processFields: function(){
@@ -49,12 +53,19 @@
 				returns[$(this).attr("name")] = $(this).val();
 			});
 			return returns;
+		},
+		
+		removeFile: function(id){
+			uploader.removeFile(uploader.getFile(id));
+			$("span #"+id).remove();
 		}
+		
+		
 	
 	};
 
 	var uploader = new plupload.Uploader({
-		runtimes : 'html5,flash,gears,html4',
+		runtimes : 'flash,gears,silverlight',
 		browse_button : 'browse',
 		max_file_size : '10mb',
 		url:uploadUrl,
