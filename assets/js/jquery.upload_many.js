@@ -83,9 +83,10 @@
 		max_file_size : '10mb',
 		url:uploadUrl,
 		multipart:true,
+		chunk_size:'1mb',
 		
 		//TODO: make settting.
-		resize : {width : 320, height : 240, quality : 90},
+		resize : {width : 100, height:100, quality : 90},
 		
 		flash_swf_url : Symphony.WEBSITE+'/extensions/upload_many/assets/plupload/plupload.flash.swf',
 		
