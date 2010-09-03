@@ -28,6 +28,9 @@
 				uploader.settings.multipart_params['fieldName'] = upload_many.fieldName;
 				
 				uploader.start();
+				
+				$("span span#list em").hide();
+				
 				e.preventDefault();
 				//create all entries
 			});
@@ -41,6 +44,16 @@
 					});
 				});
 				up.refresh(); // Reposition Flash/Silverlight
+			});
+			
+			uploader.bind('UploadProgress', function(up, file){
+			
+				$("#"+file.id).find(".upload-progress").width(file.percent+"%");
+				
+			});
+			
+			uploader.bind('FileUploaded', function(Up, File, Response) {
+				console.log(Response);
 			});
 			
 			
@@ -65,7 +78,7 @@
 	};
 
 	var uploader = new plupload.Uploader({
-		runtimes : 'flash,gears,silverlight',
+		runtimes : 'flash',
 		browse_button : 'browse',
 		max_file_size : '10mb',
 		url:uploadUrl,
