@@ -14,4 +14,11 @@ Installation
 -------------
 
 **update:** It is no longer needed to tweak core code.
+
+
+TODO
+----------------
 	
+	- Fix flash multipart uploads
+	- Fix javascript feedback on error and success
+	- Cleanup code
