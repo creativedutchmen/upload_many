@@ -109,7 +109,7 @@
 	};
 
 	var uploader = new plupload.Uploader({
-		runtimes : 'flash',
+		runtimes : 'html5',
 		browse_button : 'browse',
 		max_file_size : '10mb',
 		url:upload_many.uploadUrl,

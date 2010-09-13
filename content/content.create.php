@@ -1,5 +1,8 @@
 <?php
 require_once(TOOLKIT . '/class.administrationpage.php');
+require_once(TOOLKIT . '/class.sectionmanager.php');
+require_once(TOOLKIT . '/class.entrymanager.php');
+require_once(TOOLKIT . '/class.field.php');
 require_once(EXTENSIONS . '/upload_many/fields/field.upload_many.php');
 
 class contentExtensionUpload_Manycreate extends AdministrationPage {
